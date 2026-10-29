@@ -1,0 +1,1618 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+ <meta name="apple-mobile-web-app-capable" content="yes">
+ <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+ <title>Zikir Platformu</title>
+ <script>
+ try { if (localStorage.getItem('nightOn') === '1') document.documentElement.classList.add('night'); } catch (e) {}
+ </script>
+ <style>
+ :root {
+ --tefriciye-color: #D32F2F;
+ --muncie-color: #673AB7;
+ --salavat-color: #2E7D32;
+ --estagfirullah-color: #455A64;
+ --yaallah-color: #1976D2;
+ --yalatif-color: #0097A7;
+ --yafettah-color: #F57C00;
+ --bg-body: #f4f7f6;
+ --title-bg: #2c3e50;
+ }
+
+ * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+
+ body {
+ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+ margin: 0; padding: 0;
+ background-color: var(--bg-body);
+ height: 100dvh;
+ display: flex;
+ justify-content: center;
+ overflow: hidden;
+ user-select: none;
+ }
+
+ .app-container {
+ width: 100%;
+ max-width: 450px;
+ background-color: white;
+ height: 100%;
+ display: flex;
+ flex-direction: column;
+ position: relative;
+ }
+
+ .main-title-container {
+ padding: 0;
+ display: flex;
+ justify-content: center;
+ flex-shrink: 0;
+ }
+
+ .title-box {
+ background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 50%, #1a3a2a 100%);
+ padding: 20px 0 14px 0;
+ width: 100%;
+ text-align: center;
+ box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+ position: relative;
+ overflow: hidden;
+ }
+
+ .title-box::before {
+ content: '';
+ position: absolute;
+ top: -30px; left: -30px;
+ width: 120px; height: 120px;
+ background: rgba(255,255,255,0.04);
+ border-radius: 50%;
+ }
+ .title-box::after {
+ content: '';
+ position: absolute;
+ bottom: -40px; right: -20px;
+ width: 150px; height: 150px;
+ background: rgba(255,255,255,0.03);
+ border-radius: 50%;
+ }
+
+ .title-emoji { font-size: 26px; display: block; margin-bottom: 2px; }
+
+ .main-title {
+ font-size: 26px;
+ font-weight: 900;
+ color: white;
+ letter-spacing: 3px;
+ margin: 0;
+ text-transform: uppercase;
+ }
+
+ .title-subtitle {
+ font-size: 10px;
+ color: rgba(255,255,255,0.45);
+ letter-spacing: 2px;
+ margin-top: 4px;
+ text-transform: uppercase;
+ }
+
+ #home-screen {
+ display: flex;
+ flex-direction: column;
+ padding: 0 12px 15px 12px;
+ height: 100%;
+ overflow: hidden;
+ }
+
+ #card-list {
+ flex: 1;
+ min-height: 0;
+ overflow-y: auto;
+ padding-top: 12px;
+ }
+
+ .menu-card {
+ width: 100%;
+ padding: 14px 15px;
+ border-radius: 16px;
+ margin-bottom: 10px;
+ cursor: pointer;
+ color: white;
+ box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+ transition: transform 0.1s;
+ position: relative;
+ overflow: hidden;
+ }
+ .menu-card:active { transform: scale(0.98); }
+
+ .card-tefriciye { background: linear-gradient(135deg, #ef5350, var(--tefriciye-color)); }
+ .card-muncie { background: linear-gradient(135deg, #7e57c2, var(--muncie-color)); }
+ .card-salavat { background: linear-gradient(135deg, #66bb6a, var(--salavat-color)); }
+ .card-estagfirullah { background: linear-gradient(135deg, #78909c, var(--estagfirullah-color)); }
+ .card-yaallah { background: linear-gradient(135deg, #42a5f5, var(--yaallah-color)); }
+ .card-yalatif { background: linear-gradient(135deg, #26c6da, var(--yalatif-color)); }
+ .card-yafettah { background: linear-gradient(135deg, #ffb74d, var(--yafettah-color)); }
+
+ .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+ .card-name { font-size: 16px; font-weight: bold; }
+ .card-badges { display: flex; gap: 5px; align-items: center; }
+ .card-counter-badge {
+   background: rgba(255,255,255,0.25);
+   padding: 2px 9px;
+   border-radius: 10px;
+   font-weight: 800;
+   font-size: 12px;
+   display: flex;
+   align-items: center;
+   gap: 3px;
+ }
+ .badge-icon { font-size: 11px; }
+ .card-fazilet { font-size: 12px; line-height: 1.4; opacity: 0.88; margin-top: 4px; }
+
+ .card-mini-progress {
+   height: 4px;
+   background: rgba(255,255,255,0.25);
+   border-radius: 2px;
+   margin-top: 8px;
+   overflow: hidden;
+ }
+ .card-mini-bar {
+   height: 100%;
+   background: rgba(255,255,255,0.85);
+   border-radius: 2px;
+   transition: width 0.4s ease;
+ }
+ .card-stats-row {
+   display: flex;
+   gap: 8px;
+   margin-top: 6px;
+   font-size: 11px;
+   opacity: 0.85;
+ }
+ .stat-pill {
+   background: rgba(0,0,0,0.15);
+   border-radius: 6px;
+   padding: 2px 7px;
+   font-weight: 700;
+ }
+
+ .mini-hedef-btn {
+   position: absolute;
+   right: 10px;
+   bottom: 10px;
+   width: 30px;
+   height: 30px;
+   border-radius: 50%;
+   border: none;
+   background: rgba(255,255,255,0.3);
+   color: #fff;
+   font-size: 15px;
+   font-weight: 900;
+   line-height: 1;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   cursor: pointer;
+   z-index: 2;
+ }
+ .mini-hedef-btn:active { transform: scale(0.9); }
+
+ .mini-hedef-row {
+   margin-top: 8px;
+   font-size: 11px;
+   font-weight: 700;
+   opacity: 0.92;
+ }
+ .mini-hedef-done { opacity: 1; }
+ .mini-hedef-progress {
+   height: 3px;
+   background: rgba(255,255,255,0.25);
+   border-radius: 2px;
+   margin-top: 3px;
+   overflow: hidden;
+ }
+ .mini-hedef-bar {
+   height: 100%;
+   background: rgba(255,255,255,0.9);
+   border-radius: 2px;
+   transition: width 0.4s ease;
+ }
+
+ .db-status-wrap {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   align-items: center;
+   flex-shrink: 0;
+   gap: 6px 8px;
+   margin-top: 8px;
+   padding: 0 10px;
+ }
+ .db-dot {
+   width: 10px; height: 10px;
+   border-radius: 50%;
+   background: #e53935;
+   box-shadow: 0 0 0 3px rgba(229,57,53,0.2);
+   transition: background 0.3s, box-shadow 0.3s;
+   flex-shrink: 0;
+ }
+ .db-dot.connected {
+   background: #2ecc71;
+   box-shadow: 0 0 0 3px rgba(46,204,113,0.2);
+ }
+ .db-label {
+   font-size: 10px;
+   color: #8a97a3;
+   letter-spacing: 0.5px;
+ }
+ .db-connect-btn {
+   font-size: 11px;
+   font-weight: 700;
+   color: #fff;
+   background: #34495e;
+   border: none;
+   border-radius: 999px;
+   padding: 4px 12px;
+   cursor: pointer;
+ }
+ .db-connect-btn:active { transform: scale(0.96); }
+
+ .toggle-wrap {
+   display: flex;
+   justify-content: center;
+   flex-wrap: wrap;
+   flex-shrink: 0;
+   gap: 8px;
+   margin: 10px 0 0 0;
+   padding-bottom: 4px;
+ }
+ .toggle-btn {
+   border: 1px solid #e1e5ea;
+   background: #f7f8fa;
+   color: #555;
+   border-radius: 999px;
+   padding: 6px 12px;
+   font-weight: 700;
+   font-size: 12px;
+   box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+ }
+ .toggle-btn.active {
+   background: #2c3e50 !important;
+   color: #fff !important;
+   border-color: #2c3e50 !important;
+ }
+ .toggle-btn.tb-blue   { background: #2f80ed; color: #fff; border-color: #2f80ed; }
+ .toggle-btn.tb-orange { background: #fb8c00; color: #fff; border-color: #fb8c00; }
+ .toggle-btn.tb-red    { background: #e53935; color: #fff; border-color: #e53935; }
+ .toggle-btn.tb-purple { background: #8e24aa; color: #fff; border-color: #8e24aa; }
+ .toggle-btn.tb-green  { background: #43a047; color: #fff; border-color: #43a047; }
+ .toggle-btn.add-btn:active { transform: scale(0.96); }
+ .toggle-btn.tb-night  { background: #37474f; color: #fff; border-color: #37474f; }
+
+ /* ===== GECE MODU (yalnızca ana sayfa) ===== */
+ html.night body { background-color: #0d1115; }
+ html.night .app-container { background-color: #151b21; }
+ html.night .db-label { color: #9aa7b2; }
+ html.night .toggle-btn { box-shadow: 0 2px 6px rgba(0,0,0,0.4); }
+ html.night .toggle-btn.active { background: #4a6378 !important; border-color: #4a6378 !important; }
+ html.night .toggle-btn.tb-night { background: #f9a825; color: #1a1a1a; border-color: #f9a825; }
+ html.night .menu-card { box-shadow: 0 4px 14px rgba(0,0,0,0.5); }
+
+ /* Zikir ekranı */
+ html.night #zikir-screen { background: #151b21; }
+ html.night header { border-bottom-color: #2a343d; }
+ html.night .btn-back { color: #b0bec5; }
+ html.night #top-title { filter: brightness(1.5); }
+ html.night .top-actions { background: #151b21; border-bottom-color: #2a343d; }
+ html.night .prayer-text { color: #e8eaed; }
+ html.night .fazilet-zikir { color: #9aa7b2; }
+ html.night .footer-panel { background: #151b21; border-top-color: #2a343d; }
+ html.night .daily-label { color: #9aa7b2; }
+ html.night .tour-label { background: #37474f; }
+ html.night .counter-row { color: #cfd8dc; }
+ html.night .progress-container { background: #2a343d; }
+ html.night .top-actions button:disabled, html.night .side-actions button:disabled { background: #2a343d !important; color: #6b7a86 !important; }
+ html.night .big-zikret-btn:disabled { background-color: #4a545c !important; }
+
+ /* Açılır pencereler */
+ html.night .confirm-box, html.night .zikir-form-box { background: #1d252c; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+ html.night .confirm-text, html.night .zikir-form-box h3 { color: #e8eaed; }
+ html.night .confirm-hint, html.night .zf-label { color: #9aa7b2; }
+ html.night .confirm-actions button { background: #2a343d; color: #e8eaed; border-color: #3a4552; }
+ html.night .confirm-actions .yes { background: #4a6378; border-color: #4a6378; color: #fff; }
+ html.night .zf-input, html.night .zf-textarea { background: #151b21; color: #e8eaed; border-color: #3a4552; }
+
+ #zikir-screen {
+ display: none;
+ flex-direction: column;
+ height: 100%;
+ position: absolute;
+ top: 0; left: 0; width: 100%;
+ background: white;
+ z-index: 100;
+ }
+
+ header {
+ height: 60px;
+ display: flex;
+ align-items: center;
+ border-bottom: 1px solid #eee;
+ flex-shrink: 0;
+ }
+ .btn-back { font-size: 36px; background: none; border: none; color: #555; cursor: pointer; padding: 0 20px; line-height: 1; }
+ .header-title { flex: 1; text-align: center; font-weight: 800; font-size: 18px; margin-right: 56px; }
+
+ .prayer-container {
+ flex: 1;
+ display: flex;
+ flex-direction: column;
+ align-items: center; 
+ padding: 25px; 
+ overflow-y: auto;
+ }
+ .prayer-text { width: 100%; font-weight: 500; color: #222; user-select: text; }
+ .align-left { text-align: left; }
+ .align-center { text-align: center; }
+
+ .size-tefriciye { font-size: 20px; line-height: 1.6; }
+ .size-muncie { font-size: 18px; line-height: 1.6; } 
+ .size-extra-large { font-size: 36px; line-height: 1.3; font-weight: 700; }
+
+ .fazilet-zikir {
+   margin-top: 16px;
+   font-size: 13px;
+   color: #666;
+   text-align: center;
+   line-height: 1.4;
+ }
+
+ .footer-panel {
+ padding: 15px 20px 35px 20px;
+ background: #fff;
+ border-top: 1px solid #f0f0f0;
+ }
+
+ .stats-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+ .daily-label { font-size: 13px; color: #777; font-weight: bold; }
+ .tour-label { font-size: 13px; color: #fff; background: #333; padding: 3px 10px; border-radius: 6px; font-weight: bold; }
+ 
+ .counter-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 800; font-size: 15px; color: #444; }
+ .progress-container { height: 12px; background: #eee; border-radius: 6px; overflow: hidden; margin-bottom: 25px; }
+ .progress-bar { height: 100%; width: 0%; transition: width 0.4s ease; }
+
+ .btn-grid { display: flex; align-items: center; gap: 8px; }
+
+ .big-zikret-btn {
+ height: 120px; width: 50%; max-width: 50%; border-radius: 20px; border: none; color: white;
+ font-size: 26px; font-weight: 900; box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+ }
+ .big-zikret-btn:disabled { background-color: #999 !important; }
+
+ #confirmModal {
+   position: fixed;
+   inset: 0;
+   background: rgba(0,0,0,0.45);
+   display: none;
+   align-items: center;
+   justify-content: center;
+   z-index: 9999;
+ }
+ .confirm-box {
+   background: #fff;
+   width: 85%;
+   max-width: 360px;
+   border-radius: 16px;
+   padding: 18px;
+   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+   text-align: center;
+ }
+ .confirm-text { font-weight: 700; color: #333; margin-bottom: 14px; }
+ .confirm-hint { font-size: 12px; color: #777; margin-bottom: 12px; }
+ .confirm-actions {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: 10px;
+ }
+ .confirm-actions button {
+   padding: 10px 12px;
+   border-radius: 10px;
+   border: 1px solid #ddd;
+   background: #f7f8fa;
+   font-weight: 700;
+ }
+ .confirm-actions .yes {
+   background: #2c3e50;
+   color: #fff;
+   border-color: #2c3e50;
+ }
+
+ .top-actions {
+   flex-shrink: 0;
+   padding: 10px 16px 8px;
+   background: #fff;
+   border-bottom: 1px solid #f0f0f0;
+ }
+ .top-actions-row {
+   display: grid;
+   grid-template-columns: repeat(3, 1fr);
+   gap: 8px;
+   margin-bottom: 8px;
+ }
+ .top-actions-row.two-col {
+   grid-template-columns: repeat(2, 1fr);
+   margin-bottom: 0;
+ }
+ .top-actions button, .side-actions button {
+   height: 40px;
+   border: none;
+   border-radius: 10px;
+   font-size: 12px;
+   font-weight: 700;
+   color: #fff;
+   cursor: pointer;
+   box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+ }
+ #editBtn { background: #2f80ed; }
+ #resetAllBtn { background: #fb8c00; }
+ #resetToursBtn { background: #43a047; }
+ #deleteZikirBtn { background: #e53935; }
+ #editZikirBtn { background: #8e24aa; }
+ .top-actions button:disabled, .side-actions button:disabled {
+   opacity: 0.4;
+   background: #ccc !important;
+   color: #888 !important;
+   box-shadow: none;
+ }
+ .side-actions {
+   display: flex;
+   flex-direction: column;
+   gap: 6px;
+   width: 50%;
+ }
+ .side-actions-bottom { display: flex; gap: 6px; }
+ .side-actions-bottom button { flex: 1; }
+ .side-actions button { font-size: 10px; padding: 0 2px; }
+
+ .zikir-form-modal {
+   display: none;
+   position: fixed;
+   inset: 0;
+   background: rgba(0,0,0,0.5);
+   z-index: 999;
+   align-items: center;
+   justify-content: center;
+   padding: 20px;
+ }
+ .zikir-form-box {
+   background: #fff;
+   border-radius: 16px;
+   padding: 22px 20px;
+   width: 100%;
+   max-width: 440px;
+   max-height: 92dvh;
+   overflow-y: auto;
+ }
+ .zikir-form-box h3 {
+   margin: 0 0 14px;
+   font-size: 17px;
+   color: #333;
+ }
+ .zf-label {
+   display: block;
+   font-size: 12px;
+   font-weight: 700;
+   color: #666;
+   margin: 10px 0 4px;
+ }
+ .zf-input, .zf-textarea {
+   width: 100%;
+   box-sizing: border-box;
+   border: 1.5px solid #ddd;
+   border-radius: 10px;
+   padding: 12px 14px;
+   font-size: 16px;
+   line-height: 1.4;
+   font-family: inherit;
+   resize: vertical;
+ }
+ .zf-input { min-height: 50px; }
+ #zf-text { min-height: 140px; }
+ #zf-fazilet { min-height: 120px; }
+ </style>
+</head>
+<body>
+
+ <div class="app-container">
+ <div id="home-screen">
+ <div class="main-title-container">
+ <div class="title-box">
+ <h1 class="main-title">Zikir</h1>
+ <div class="title-subtitle">Günlük İbadet Platformu</div>
+ </div>
+ </div>
+
+ <div class="toggle-wrap">
+   <button id="soundToggle" class="toggle-btn tb-blue">Sesli</button>
+   <button id="vibeToggle" class="toggle-btn tb-orange">Titreşimli</button>
+   <button id="lockToggle" class="toggle-btn tb-red">Kilitle</button>
+   <button id="undoDayBtn" class="toggle-btn tb-purple" onclick="undoLastZikirDelete()">Geri Al</button>
+   <button id="addZikirBtn" class="toggle-btn tb-green" onclick="addCustomZikir()">+ Ekle</button>
+ </div>
+
+ <div class="db-status-wrap">
+   <span id="dbDot" class="db-dot"></span>
+   <span id="dbLabel" class="db-label">Veritabanı</span>
+   <button id="nightToggle" class="toggle-btn tb-night">🌙 Gece</button>
+   <button id="dbConnectBtn" class="db-connect-btn" style="display:none; background:#00acc1;" onclick="manualConnectDB()">Bağlan</button>
+   <button id="dbExportBtn" class="db-connect-btn" style="background:#3949ab;" onclick="exportDbJson()">Yedek Al</button>
+   <button id="dbImportBtn" class="db-connect-btn" style="background:#f9a825;" onclick="document.getElementById('dbImportInput').click()">Yedek Yükle</button>
+   <input type="file" id="dbImportInput" accept="application/json" style="display:none;" onchange="importDbJsonFile(this)">
+ </div>
+
+ <div id="card-list"></div>
+ </div>
+
+ <div id="zikir-screen">
+ <header>
+ <button class="btn-back" onclick="closeApp()">‹</button>
+ <div class="header-title" id="top-title">Dua</div>
+ </header>
+ <div class="top-actions">
+   <div class="top-actions-row two-col">
+     <button id="deleteZikirBtn" onclick="deleteZikirCompletely()">🗑️ Zikri Sil</button>
+     <button id="editZikirBtn" onclick="editCurrentZikir()">✏️ Zikri Düzenle</button>
+   </div>
+ </div>
+ <div class="prayer-container">
+ <div id="main-prayer" class="prayer-text"></div>
+ <div id="fazilet-zikir" class="fazilet-zikir"></div>
+ </div>
+ <div class="footer-panel">
+ <div class="stats-top">
+ <div class="daily-label">BUGÜN: <span id="day-val">0</span></div>
+ <div class="tour-label" id="tour-box">TUR: <span id="tour-val">0</span></div>
+ </div>
+ <div class="counter-row">
+ <span>Toplam: <span id="tot-val">0</span></span>
+ <span id="perc-val">0%</span>
+ <span>Hedef: <span id="tar-val">0</span></span>
+ </div>
+ <div class="progress-container">
+ <div id="bar-fill" class="progress-bar"></div>
+ </div>
+ <div id="mini-hedef-zikir-row" class="mini-hedef-row" style="display:none;"></div>
+ <div class="btn-grid">
+ <div class="side-actions">
+   <button id="editBtn" onclick="changeNumber()">Düzenle</button>
+   <div class="side-actions-bottom">
+     <button id="resetAllBtn" onclick="resetAll()">Sıfırla</button>
+     <button id="resetToursBtn" onclick="resetTours()">Tur Sıfırla</button>
+   </div>
+ </div>
+ <button id="main-btn" class="big-zikret-btn">ZİKRET</button>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <div id="zikirFormModal" class="zikir-form-modal">
+   <div class="zikir-form-box">
+     <h3 id="zf-heading">Yeni Zikir Ekle</h3>
+
+     <label class="zf-label">1. Başlık (üstte görünür)</label>
+     <input type="text" id="zf-title" class="zf-input" placeholder="Örn: Ya Fettâh">
+
+     <label class="zf-label">2. Başlık / Zikredilecek Metin (boş bırakılabilir)</label>
+     <textarea id="zf-text" class="zf-textarea" rows="6" placeholder="Büyük yazıyla ortada gösterilecek metin"></textarea>
+
+     <label class="zf-label">Açıklama</label>
+     <textarea id="zf-fazilet" class="zf-textarea" rows="5" placeholder="Açıklama / fazilet"></textarea>
+
+     <label class="zf-label">Hedef Sayı</label>
+     <input type="number" id="zf-target" class="zf-input" min="1" value="100">
+
+     <div class="confirm-actions" style="margin-top:14px;">
+       <button id="zf-cancel" onclick="closeZikirForm()">İptal</button>
+       <button id="zf-save" class="yes" onclick="saveZikirForm()">Kaydet</button>
+     </div>
+   </div>
+ </div>
+
+ <div id="confirmModal">
+   <div class="confirm-box">
+     <div id="confirmText" class="confirm-text"></div>
+     <div class="confirm-hint">0 = Evet • 1 = Hayır</div>
+     <div class="confirm-actions">
+       <button id="confirmNo">Hayır</button>
+       <button id="confirmYes" class="yes">Evet</button>
+     </div>
+   </div>
+ </div>
+
+ <script>
+ const DATA = {
+ tefriciye: { 
+ title: "Salât-ı Tefriciye", 
+ target: 4444, 
+ color: "var(--tefriciye-color)", 
+ class: "card-tefriciye", 
+ size: "size-tefriciye", 
+ align: "align-left", 
+ fazilet: "Sıkıntıların aşılması ve hayırlı kapıların açılması için.", 
+ text: "Allâhumme salli salâten kâmileten ve sellim selâmen tâmmen alâ Seyyidinâ Muhammedinillezî tenhallü bihil ukadü ve tenfericu bihil-kürebü ve tukdâ bihil-havâicu ve tünâlü bihir-reğâibü ve hüsnül-havâtimi ve yustaskal ğamâmu bivechihil Kerîm ve alâ âlihî ve sahbihi fî külli lemhatin ve nefesin bi adedi külli ma'lûmin lek." 
+ },
+ muncie: { 
+ title: "Salât-ı Münciye", 
+ target: 1000, 
+ color: "var(--muncie-color)", 
+ class: "card-muncie", 
+ size: "size-muncie", 
+ align: "align-left", 
+ fazilet: "Dünya ve ahiret belalarından kurtulmak için.", 
+ text: "Allâhumme salli alâ Seyyidinâ Muhammedin ve alâ âli Seyyidinâ Muhammedin salâten tüncînâ bihâ min-cemî’il-ehvâli vel âfat. Ve takdî lenâ bihâ cemîal hâcât ve tutahhirunâ bihâ min-cemîi’s-seyyiât ve terfe’unâ bihâ a’lâ’d-deracât ve tubelliğunâ bihâ aksâ’l-ğayât min cemiîl-hayrâti fî’l-hayâti ve ba’del-memât birahmetike Yâ erhame’r-rahimîn. Hasbunellahu ve ni’mel vekîl, ni’mel mevlâ ve ni’me’n-nasîr. Ğufraneke rabbenâ ve ileyke’l-masîr." 
+ },
+ salavat: { title: "Salavat-ı Şerife", target: 1000, color: "var(--salavat-color)", class: "card-salavat", size: "size-extra-large", align: "align-center", fazilet: "Peygamber Efendimize (s.a.v) selam vesilesidir.", text: "Allahümme salli alâ Muhammed" },
+ estagfirullah: { title: "Estağfirullah", target: 100, color: "var(--estagfirullah-color)", class: "card-estagfirullah", size: "size-extra-large", align: "align-center", fazilet: "Günahların affı ve manevi temizlik için.", text: "Estağfirullah" },
+ yaallah: { title: "Ya Allah", target: 66, color: "var(--yaallah-color)", class: "card-yaallah", size: "size-extra-large", align: "align-center", fazilet: "Rabbimizin en ulu ismiyle sükunet için.", text: "Ya Allah" },
+ yalatif: { title: "Ya Latîf", target: 129, color: "var(--yalatif-color)", class: "card-yalatif", size: "size-extra-large", align: "align-center", fazilet: "Lütuflar ve feraha ermek için.", text: "Ya Latîf" },
+ yafettah: { title: "Ya Fettâh", target: 489, color: "var(--yafettah-color)", class: "card-yafettah", size: "size-extra-large", align: "align-center", fazilet: "Kapıların açılması ve fetihler için.", text: "Ya Fettâh" }
+ };
+
+ const ZIKIR_FAZILET_ONLY_LAST4 = ["estagfirullah","yaallah","yalatif","yafettah"];
+
+ /* ================= ÖZEL (KULLANICI EKLİ) ZİKİRLER =================
+    Renk, en üstteki karttan (Salât-ı Tefriciye - kırmızı) başlayıp
+    aşağı doğru aynı renk sırasıyla otomatik atanır, kullanıcıya
+    sorulmaz. Diğer kartlarla tamamen aynı şekilde davranır/görünür. */
+ const ZIKIR_COLOR_CYCLE = [
+   { colorVar: 'var(--tefriciye-color)',     cls: 'card-tefriciye'     },
+   { colorVar: 'var(--muncie-color)',        cls: 'card-muncie'        },
+   { colorVar: 'var(--salavat-color)',       cls: 'card-salavat'       },
+   { colorVar: 'var(--estagfirullah-color)', cls: 'card-estagfirullah' },
+   { colorVar: 'var(--yaallah-color)',       cls: 'card-yaallah'       },
+   { colorVar: 'var(--yalatif-color)',       cls: 'card-yalatif'       },
+   { colorVar: 'var(--yafettah-color)',      cls: 'card-yafettah'      }
+ ];
+
+ let customZikirler = [];
+ let deletedZikirKeys = [];
+ let zikirOverrides = {};
+
+ function loadCustomZikirlerIntoData() {
+   Object.keys(DATA).forEach(k => { if (DATA[k].custom) delete DATA[k]; });
+   try {
+     customZikirler = JSON.parse(localStorage.getItem('customZikirler') || '[]');
+   } catch (e) { customZikirler = []; }
+   customZikirler.forEach(entry => { DATA[entry.key] = entry; });
+
+   try {
+     zikirOverrides = JSON.parse(localStorage.getItem('zikirOverrides') || '{}');
+   } catch (e) { zikirOverrides = {}; }
+   Object.keys(zikirOverrides).forEach(k => {
+     if (DATA[k]) Object.assign(DATA[k], zikirOverrides[k]);
+   });
+
+   try {
+     deletedZikirKeys = JSON.parse(localStorage.getItem('deletedZikirKeys') || '[]');
+   } catch (e) { deletedZikirKeys = []; }
+   deletedZikirKeys.forEach(k => { delete DATA[k]; });
+ }
+
+ function saveCustomZikirlerToStorage() {
+   localStorage.setItem('customZikirler', JSON.stringify(customZikirler));
+ }
+
+ function saveZikirOverrides() {
+   localStorage.setItem('zikirOverrides', JSON.stringify(zikirOverrides));
+ }
+
+ function saveDeletedZikirKeys() {
+   localStorage.setItem('deletedZikirKeys', JSON.stringify(deletedZikirKeys));
+ }
+
+ let zikirFormMode = null;
+ let zikirFormEditKey = null;
+
+ function addCustomZikir() {
+   zikirFormMode = 'add';
+   zikirFormEditKey = null;
+   document.getElementById('zf-heading').textContent = 'Yeni Zikir Ekle';
+   document.getElementById('zf-title').value = '';
+   document.getElementById('zf-text').value = '';
+   document.getElementById('zf-fazilet').value = '';
+   document.getElementById('zf-target').value = 100;
+   document.getElementById('zikirFormModal').style.display = 'flex';
+ }
+
+ function closeZikirForm() {
+   document.getElementById('zikirFormModal').style.display = 'none';
+ }
+
+ function saveZikirForm() {
+   const title = document.getElementById('zf-title').value.trim();
+   const text = document.getElementById('zf-text').value.trim();
+   const fazilet = document.getElementById('zf-fazilet').value.trim();
+   const target = parseInt(document.getElementById('zf-target').value);
+
+   if (!title) { alert('Lütfen başlığı yazın.'); return; }
+   if (!text && !fazilet) { alert('2. Başlık veya Açıklama alanlarından en az birini doldurun.'); return; }
+   if (isNaN(target) || target <= 0) { alert('Geçerli bir hedef sayı girmelisiniz.'); return; }
+
+   // 2. başlık (metin) boşsa açıklama geniş alanda, başlığın hemen
+   // devamından itibaren büyük yazıyla gösterilir.
+   let finalText, finalFazilet, size, align;
+   if (text) {
+     finalText = text;
+     finalFazilet = fazilet;
+     const isLong = text.length > 40;
+     size = isLong ? 'size-muncie' : 'size-extra-large';
+     align = isLong ? 'align-left' : 'align-center';
+   } else {
+     finalText = fazilet;
+     finalFazilet = '';
+     size = 'size-muncie';
+     align = 'align-left';
+   }
+
+   if (zikirFormMode === 'add') {
+     const colorInfo = ZIKIR_COLOR_CYCLE[customZikirler.length % ZIKIR_COLOR_CYCLE.length];
+     const entry = {
+       key: 'custom_' + Date.now(),
+       custom: true,
+       title: title,
+       target: target,
+       color: colorInfo.colorVar,
+       class: colorInfo.cls,
+       size: size,
+       align: align,
+       fazilet: finalFazilet,
+       text: finalText
+     };
+     customZikirler.push(entry);
+     DATA[entry.key] = entry;
+     saveCustomZikirlerToStorage();
+     renderHome();
+   } else if (zikirFormMode === 'edit' && zikirFormEditKey) {
+     const key = zikirFormEditKey;
+     const item = DATA[key];
+     if (!item) { closeZikirForm(); return; }
+     item.title = title;
+     item.target = target;
+     item.text = finalText;
+     item.fazilet = finalFazilet;
+     item.size = size;
+     item.align = align;
+
+     if (item.custom) {
+       const idx = customZikirler.findIndex(z => z.key === key);
+       if (idx !== -1) customZikirler[idx] = item;
+       saveCustomZikirlerToStorage();
+     } else {
+       zikirOverrides[key] = { title: item.title, text: item.text, fazilet: item.fazilet, target: item.target, size: item.size, align: item.align };
+       saveZikirOverrides();
+     }
+
+     if (activeKey === key) {
+       document.getElementById('top-title').textContent = item.title;
+       const prayerEl = document.getElementById('main-prayer');
+       prayerEl.textContent = item.text;
+       prayerEl.className = "prayer-text " + item.size + " " + item.align;
+       const fz = document.getElementById('fazilet-zikir');
+       if (item.fazilet && item.fazilet.trim()) {
+         fz.textContent = item.fazilet;
+         fz.style.display = 'block';
+       } else {
+         fz.textContent = '';
+         fz.style.display = 'none';
+       }
+       document.getElementById('tar-val').textContent = item.target;
+       sync();
+     }
+     renderHome();
+   }
+
+   scheduleDbWrite();
+   closeZikirForm();
+ }
+
+ let activeKey = null;
+ let counts = { tot: 0, day: 0, tours: 0 };
+ let isWaiting = false;
+
+ let soundOn = localStorage.getItem('soundOn');
+ if (soundOn === null) soundOn = '1';
+ let vibeOn = localStorage.getItem('vibeOn');
+ if (vibeOn === null) vibeOn = '1';
+ let lockOn = localStorage.getItem('lockOn');
+ if (lockOn === null) lockOn = '0';
+
+ const soundBtn = document.getElementById('soundToggle');
+ const vibeBtn = document.getElementById('vibeToggle');
+ const lockBtn = document.getElementById('lockToggle');
+
+ /* ================= VERİTABANI (dosya) BAĞLANTISI =================
+    Bu uygulamaya özel isimler kullanılır ki aynı tarayıcıda başka
+    uygulamaların (Ziyaretçi Defteri, Vardiya vb.) veritabanlarıyla
+    karışmasın. Bir kere bağlandıktan sonra bir daha sormadan,
+    sayfa her açıldığında otomatik olarak aynı dosyaya bağlanır. */
+ const ZK_IDB_NAME    = 'ZikirPlatformuDB';
+ const ZK_IDB_VERSION = 2;
+ const ZK_HANDLE_STORE = 'zikirDbHandleStore';
+ const ZK_DATA_STORE   = 'zikirDbDataStore';
+ const ZK_HANDLE_KEY = 'zikirVeritabaniDosyasi';
+ const ZK_DATA_KEY   = 'zikirVeritabaniVerisi';
+ const ZK_DEFAULT_FILENAME = 'zikir_veritabani.json';
+
+ let dbFileHandle = null;
+ let dbConnected = false;
+ let dbWriteTimer = null;
+ let dbAutoTried = false;
+ let dbMode = null; // 'file' = masaüstü gerçek dosya, 'idb' = telefon/cihaz içi otomatik veritabanı
+
+ function zkOpenIDB() {
+   return new Promise((resolve, reject) => {
+     const req = indexedDB.open(ZK_IDB_NAME, ZK_IDB_VERSION);
+     req.onupgradeneeded = () => {
+       const db = req.result;
+       if (!db.objectStoreNames.contains(ZK_HANDLE_STORE)) db.createObjectStore(ZK_HANDLE_STORE);
+       if (!db.objectStoreNames.contains(ZK_DATA_STORE)) db.createObjectStore(ZK_DATA_STORE);
+     };
+     req.onsuccess = () => resolve(req.result);
+     req.onerror = () => reject(req.error);
+   });
+ }
+ async function zkIdbGet(store, key) {
+   try {
+     const db = await zkOpenIDB();
+     return await new Promise((resolve, reject) => {
+       const tx = db.transaction(store, 'readonly');
+       const r = tx.objectStore(store).get(key);
+       r.onsuccess = () => resolve(r.result || null);
+       r.onerror = () => reject(r.error);
+     });
+   } catch (e) { return null; }
+ }
+ async function zkIdbSet(store, key, value) {
+   try {
+     const db = await zkOpenIDB();
+     await new Promise((resolve, reject) => {
+       const tx = db.transaction(store, 'readwrite');
+       tx.objectStore(store).put(value, key);
+       tx.oncomplete = () => resolve();
+       tx.onerror = () => reject(tx.error);
+     });
+     return true;
+   } catch (e) { return false; }
+ }
+
+ /* Gerçekten yazıp geri okuyarak veritabanının çalıştığını doğrular. */
+ async function zkIdbVerify() {
+   try {
+     const stamp = String(Date.now());
+     if (!(await zkIdbSet(ZK_HANDLE_STORE, '__ping__', stamp))) return false;
+     return (await zkIdbGet(ZK_HANDLE_STORE, '__ping__')) === stamp;
+   } catch (e) { return false; }
+ }
+
+ const dbFileSupported = !!(window.showOpenFilePicker && window.showSaveFilePicker);
+ let dbIdbOk = false;      // cihaz içi depo çalışıyor mu
+ let dbFileReady = false;  // seçilen dosyaya yazma izni var mı
+
+ function setDbConnected(state, customLabel) {
+   dbConnected = state;
+   const dot = document.getElementById('dbDot');
+   const btn = document.getElementById('dbConnectBtn');
+   const label = document.getElementById('dbLabel');
+   if (state) {
+     dot.classList.add('connected');
+     label.textContent = customLabel || 'Veritabanı bağlı';
+     label.style.display = 'none';
+   } else {
+     dot.classList.remove('connected');
+     label.textContent = customLabel || 'Veritabanı bağlı değil';
+     label.style.display = '';
+   }
+   /* "Dosya Seç" yalnızca dosya henüz hiç seçilmediyse görünür. */
+   btn.style.display = (!state && dbFileSupported && !dbFileHandle) ? 'inline-block' : 'none';
+ }
+
+ function refreshDbStatus() {
+   const ok = dbFileReady || (dbIdbOk && (!dbFileSupported || !!dbFileHandle));
+   if (ok) setDbConnected(true, 'Veritabanı bağlı');
+   else if (!dbIdbOk) setDbConnected(false, 'Veritabanı bağlı değil');
+   else setDbConnected(false, 'Veritabanı dosyası seçilmedi');
+ }
+
+ function collectAllData() {
+   const zikirler = {};
+   Object.keys(DATA).forEach(key => {
+     zikirler[key] = {
+       t: localStorage.getItem('t_' + key) || '0',
+       d: localStorage.getItem('d_' + key) || '0',
+       d_date: localStorage.getItem('d_date_' + key) || '',
+       trs: localStorage.getItem('trs_' + key) || '0',
+       mh_t: localStorage.getItem('mh_target_' + key) || '',
+       mh_s: localStorage.getItem('mh_start_' + key) || ''
+     };
+   });
+   return { zikirler, soundOn, vibeOn, lockOn, customZikirler, deletedZikirKeys, zikirOverrides, savedAt: new Date().toISOString() };
+ }
+
+ function applyAllData(obj) {
+   if (!obj || typeof obj !== 'object') return;
+   if (Array.isArray(obj.customZikirler)) {
+     customZikirler = obj.customZikirler;
+     saveCustomZikirlerToStorage();
+     Object.keys(DATA).forEach(k => { if (DATA[k].custom) delete DATA[k]; });
+     customZikirler.forEach(entry => { DATA[entry.key] = entry; });
+   }
+   if (obj.zikirOverrides && typeof obj.zikirOverrides === 'object') {
+     zikirOverrides = obj.zikirOverrides;
+     saveZikirOverrides();
+     Object.keys(zikirOverrides).forEach(k => {
+       if (DATA[k]) Object.assign(DATA[k], zikirOverrides[k]);
+     });
+   }
+   if (Array.isArray(obj.deletedZikirKeys)) {
+     deletedZikirKeys = obj.deletedZikirKeys;
+     saveDeletedZikirKeys();
+     deletedZikirKeys.forEach(k => { delete DATA[k]; });
+   }
+   if (obj.zikirler) {
+     Object.keys(DATA).forEach(key => {
+       const z = obj.zikirler[key];
+       if (!z) return;
+       localStorage.setItem('t_' + key, z.t ?? '0');
+       localStorage.setItem('d_' + key, z.d ?? '0');
+       localStorage.setItem('d_date_' + key, z.d_date ?? '');
+       localStorage.setItem('trs_' + key, z.trs ?? '0');
+       if (z.mh_t) { localStorage.setItem('mh_target_' + key, z.mh_t); localStorage.setItem('mh_start_' + key, z.mh_s ?? '0'); }
+       else { localStorage.removeItem('mh_target_' + key); localStorage.removeItem('mh_start_' + key); }
+     });
+   }
+   if (obj.soundOn === '0' || obj.soundOn === '1') {
+     soundOn = obj.soundOn; localStorage.setItem('soundOn', soundOn);
+   }
+   if (obj.vibeOn === '0' || obj.vibeOn === '1') {
+     vibeOn = obj.vibeOn; localStorage.setItem('vibeOn', vibeOn);
+   }
+   if (obj.lockOn === '0' || obj.lockOn === '1') {
+     lockOn = obj.lockOn; localStorage.setItem('lockOn', lockOn);
+   }
+   refreshToggles();
+   renderHome();
+   if (activeKey && document.getElementById('zikir-screen').style.display === 'flex') {
+     load(); sync();
+   }
+ }
+
+ async function loadFromFile() {
+   if (!dbFileHandle) return;
+   try {
+     const file = await dbFileHandle.getFile();
+     const text = await file.text();
+     if (text && text.trim()) {
+       const obj = JSON.parse(text);
+       applyAllData(obj);
+     }
+   } catch (e) {}
+ }
+
+ /* Her kayıt önce cihaz içi depoya (izin gerektirmez, her zaman otomatik),
+    dosya bağlıysa ayrıca seçilen dosyaya yazılır. */
+ async function writeDbFileNow() {
+   const data = collectAllData();
+   dbIdbOk = await zkIdbSet(ZK_DATA_STORE, ZK_DATA_KEY, data);
+   if (dbFileHandle && dbFileReady) {
+     try {
+       const writable = await dbFileHandle.createWritable();
+       await writable.write(JSON.stringify(data, null, 2));
+       await writable.close();
+       localStorage.setItem('dbLastWriteAt', data.savedAt);
+     } catch (e) {
+       dbFileReady = false;
+       armReconnectOnTap();
+     }
+   }
+   refreshDbStatus();
+ }
+
+ function scheduleDbWrite() {
+   if (!dbMode) return;
+   clearTimeout(dbWriteTimer);
+   writeDbFileNow();
+ }
+
+ /* Seçilen dosyaya bağlanır: dosyadaki veri başka yerden güncellenmişse
+    alınır, değilse mevcut veri dosyaya yazılır. */
+ async function connectDbFile() {
+   let obj = null;
+   try {
+     const f = await dbFileHandle.getFile();
+     const t = await f.text();
+     if (t && t.trim()) obj = JSON.parse(t);
+   } catch (e) {}
+   const localAt = localStorage.getItem('dbLastWriteAt') || '';
+   if (obj && obj.savedAt && obj.savedAt > localAt) applyAllData(obj);
+   dbFileReady = true;
+   await writeDbFileNow();
+ }
+
+ /* Tarayıcı, yeni oturumda dosya iznini yalnızca kullanıcı dokunuşuyla
+    yeniden verebilir: sayfadaki ilk dokunuşta kayıtlı dosyaya bağlanır. */
+ let dbReconnectArmed = false;
+ function armReconnectOnTap() {
+   if (dbReconnectArmed || !dbFileHandle) return;
+   dbReconnectArmed = true;
+   document.addEventListener('click', async () => {
+     dbReconnectArmed = false;
+     if (dbFileReady || !dbFileHandle) return;
+     try {
+       const perm = await dbFileHandle.requestPermission({ mode: 'readwrite' });
+       if (perm === 'granted') { await connectDbFile(); return; }
+     } catch (e) {}
+     armReconnectOnTap();
+   }, { once: true });
+ }
+
+ async function tryAutoConnect() {
+   dbMode = 'idb';
+   document.getElementById('dbExportBtn').style.display = 'inline-block';
+   document.getElementById('dbImportBtn').style.display = 'inline-block';
+   document.getElementById('dbConnectBtn').textContent = 'Dosya Seç';
+
+   dbIdbOk = await zkIdbVerify();
+   if (dbIdbOk) {
+     const saved = await zkIdbGet(ZK_DATA_STORE, ZK_DATA_KEY);
+     if (saved) applyAllData(saved);
+   }
+
+   if (dbFileSupported) {
+     dbFileHandle = await zkIdbGet(ZK_HANDLE_STORE, ZK_HANDLE_KEY);
+     if (dbFileHandle) {
+       let perm = 'prompt';
+       try { perm = await dbFileHandle.queryPermission({ mode: 'readwrite' }); } catch (e) {}
+       if (perm === 'granted') await connectDbFile();
+       else armReconnectOnTap();
+     }
+   }
+   await writeDbFileNow();
+ }
+
+ async function manualConnectDB() {
+   if (!dbFileSupported) return;
+   let handle = null;
+   try {
+     [handle] = await window.showOpenFilePicker({
+       types: [{ description: 'Zikir Veritabanı', accept: { 'application/json': ['.json'] } }],
+       excludeAcceptAllOption: false
+     });
+   } catch (e) {
+     // Dosya seçilmedi — yeni bir veritabanı dosyası oluşturmayı dene.
+     try {
+       handle = await window.showSaveFilePicker({
+         suggestedName: ZK_DEFAULT_FILENAME,
+         types: [{ description: 'Zikir Veritabanı', accept: { 'application/json': ['.json'] } }]
+       });
+     } catch (e2) { return; }
+   }
+   try {
+     const perm = await handle.requestPermission({ mode: 'readwrite' });
+     if (perm !== 'granted') return;
+   } catch (e) { return; }
+   dbFileHandle = handle;
+   await zkIdbSet(ZK_HANDLE_STORE, ZK_HANDLE_KEY, handle);
+   await connectDbFile();
+ }
+
+ function exportDbJson() {
+   const blob = new Blob([JSON.stringify(collectAllData(), null, 2)], { type: 'application/json' });
+   const url = URL.createObjectURL(blob);
+   const a = document.createElement('a');
+   a.href = url;
+   a.download = ZK_DEFAULT_FILENAME;
+   document.body.appendChild(a);
+   a.click();
+   document.body.removeChild(a);
+   setTimeout(() => URL.revokeObjectURL(url), 2000);
+ }
+
+ function importDbJsonFile(input) {
+   const file = input.files && input.files[0];
+   if (!file) return;
+   const reader = new FileReader();
+   reader.onload = () => {
+     try {
+       const obj = JSON.parse(reader.result);
+       applyAllData(obj);
+       writeDbFileNow();
+       alert('Veriler içe aktarıldı.');
+     } catch (e) {
+       alert('Dosya okunamadı, geçerli bir yedek dosyası seçin.');
+     }
+   };
+   reader.readAsText(file);
+   input.value = '';
+ }
+
+ function refreshToggles() {
+   const s = soundOn === '1';
+   const v = vibeOn === '1';
+   const l = lockOn === '1';
+   soundBtn.textContent = s ? 'Sesli' : 'Sessiz';
+   vibeBtn.textContent = v ? 'Titreşimli' : 'Titreşimsiz';
+   lockBtn.textContent = l ? 'Kilitli' : 'Kilitle';
+   soundBtn.classList.toggle('active', s);
+   vibeBtn.classList.toggle('active', v);
+   lockBtn.classList.toggle('active', l);
+   applyLockState();
+ }
+
+ function applyLockState() {
+   const locked = lockOn === '1';
+   ['editBtn', 'resetAllBtn', 'resetToursBtn'].forEach(id => {
+     const b = document.getElementById(id);
+     if (b) b.disabled = locked;
+   });
+   ['deleteZikirBtn', 'editZikirBtn'].forEach(id => {
+     const b = document.getElementById(id);
+     if (b) b.style.display = locked ? 'none' : '';
+   });
+   document.querySelectorAll('.mini-hedef-btn').forEach(b => {
+     b.style.display = locked ? 'none' : 'flex';
+   });
+ }
+
+ const nightBtn = document.getElementById('nightToggle');
+ function applyNight() {
+   const on = localStorage.getItem('nightOn') === '1';
+   document.documentElement.classList.toggle('night', on);
+   nightBtn.textContent = on ? '☀️ Gündüz' : '🌙 Gece';
+ }
+ nightBtn.addEventListener('click', () => {
+   const on = localStorage.getItem('nightOn') === '1';
+   localStorage.setItem('nightOn', on ? '0' : '1');
+   applyNight();
+ });
+
+ soundBtn.addEventListener('click', () => {
+   soundOn = (soundOn === '1') ? '0' : '1';
+   localStorage.setItem('soundOn', soundOn);
+   refreshToggles();
+   scheduleDbWrite();
+ });
+
+ lockBtn.addEventListener('click', () => {
+   lockOn = (lockOn === '1') ? '0' : '1';
+   localStorage.setItem('lockOn', lockOn);
+   refreshToggles();
+   scheduleDbWrite();
+ });
+
+ vibeBtn.addEventListener('click', () => {
+   vibeOn = (vibeOn === '1') ? '0' : '1';
+   localStorage.setItem('vibeOn', vibeOn);
+   refreshToggles();
+   scheduleDbWrite();
+ });
+
+ let audioCtx;
+ function beep(duration) {
+   if (soundOn !== '1') return;
+   try {
+     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+     const o = audioCtx.createOscillator();
+     const g = audioCtx.createGain();
+     o.type = "sine";
+     o.frequency.value = 880;
+     g.gain.value = 0.05;
+     o.connect(g); g.connect(audioCtx.destination);
+     o.start();
+     setTimeout(() => { o.stop(); }, duration || 80);
+   } catch (e) {}
+ }
+
+ function finishBeep() {
+   if (soundOn !== '1') return;
+   try {
+     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+     const notes = [523, 659, 784]; // Do - Mi - Sol
+     notes.forEach((freq, i) => {
+       setTimeout(() => {
+         const o = audioCtx.createOscillator();
+         const g = audioCtx.createGain();
+         o.type = "sine";
+         o.frequency.value = freq;
+         g.gain.setValueAtTime(0.12, audioCtx.currentTime);
+         g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+         o.connect(g); g.connect(audioCtx.destination);
+         o.start();
+         o.stop(audioCtx.currentTime + 0.3);
+       }, i * 180);
+     });
+   } catch (e) {}
+ }
+
+ function miniHedefBeep() {
+   if (soundOn !== '1') return;
+   try {
+     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+     const notes = [659, 988]; // Mi - Si (kısa, iki'li bip)
+     notes.forEach((freq, i) => {
+       setTimeout(() => {
+         const o = audioCtx.createOscillator();
+         const g = audioCtx.createGain();
+         o.type = "sine";
+         o.frequency.value = freq;
+         g.gain.setValueAtTime(0.12, audioCtx.currentTime);
+         g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.18);
+         o.connect(g); g.connect(audioCtx.destination);
+         o.start();
+         o.stop(audioCtx.currentTime + 0.18);
+       }, i * 130);
+     });
+   } catch (e) {}
+ }
+
+ function getLocalDateKey() {
+   const d = new Date();
+   const y = d.getFullYear();
+   const m = String(d.getMonth() + 1).padStart(2, '0');
+   const day = String(d.getDate()).padStart(2, '0');
+   return `${y}-${m}-${day}`;
+ }
+
+ function renderHome() {
+ const list = document.getElementById('card-list');
+ const today = getLocalDateKey();
+ list.innerHTML = '';
+ Object.keys(DATA).forEach(key => {
+   const item = DATA[key];
+   const tot = parseInt(localStorage.getItem('t_' + key)) || 0;
+   const tours = parseInt(localStorage.getItem('trs_' + key)) || 0;
+   const ddate = localStorage.getItem('d_date_' + key);
+   const day = (ddate === today) ? (parseInt(localStorage.getItem('d_' + key)) || 0) : 0;
+   const pct = Math.min(Math.floor((tot / item.target) * 100), 100);
+   const progressBar = `<div class="card-mini-progress"><div class="card-mini-bar" style="width:${pct}%"></div></div>`;
+   const statsRow = `<div class="card-stats-row">
+     <span class="stat-pill">🔢 ${tot}/${item.target}</span>
+     <span class="stat-pill">🔄 Tur: ${tours}</span>
+     <span class="stat-pill">📅 Bugün: ${day}</span>
+   </div>`;
+   list.innerHTML += `<div class="menu-card ${item.class}" onclick="openZikir('${key}')">
+     <button class="mini-hedef-btn" onclick="setMiniHedef('${key}', event)" style="display:${lockOn === '1' ? 'none' : 'flex'};">🎯</button>
+     <div class="card-header">
+       <span class="card-name">${item.title}</span>
+       <span class="card-counter-badge"><span class="badge-icon">%${pct}</span></span>
+     </div>
+     <div class="card-fazilet">${item.fazilet}</div>
+     ${progressBar}
+     ${statsRow}
+   </div>`;
+ });
+ }
+
+ function getMiniHedef(key, currentTot) {
+   const target = parseInt(localStorage.getItem('mh_target_' + key));
+   if (!target || target <= 0) return null;
+   const start = parseInt(localStorage.getItem('mh_start_' + key)) || 0;
+   const tot = (currentTot !== undefined) ? currentTot : (parseInt(localStorage.getItem('t_' + key)) || 0);
+   const done = Math.max(0, Math.min(tot - start, target));
+   return { target, done };
+ }
+
+ function renderMiniHedefZikir() {
+   const el = document.getElementById('mini-hedef-zikir-row');
+   if (!el || !activeKey) return;
+   const mini = getMiniHedef(activeKey, counts.tot);
+   if (mini) {
+     el.style.display = 'block';
+     el.className = "mini-hedef-row" + (mini.done >= mini.target ? ' mini-hedef-done' : '');
+     el.innerHTML = `🎯 Küçük Hedef: ${mini.done}/${mini.target}${mini.done >= mini.target ? ' ✓' : ''}
+       <div class="mini-hedef-progress"><div class="mini-hedef-bar" style="width:${Math.min((mini.done / mini.target) * 100, 100)}%"></div></div>`;
+   } else {
+     el.style.display = 'none';
+     el.innerHTML = '';
+   }
+ }
+
+ function setMiniHedef(key, ev) {
+   if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+   if (lockOn === '1') return;
+   const val = prompt('Küçük hedef için kaç zikir bekliyorsun?', '100');
+   if (val === null) return;
+   const n = parseInt(val);
+   if (isNaN(n) || n <= 0) { alert('Geçerli bir sayı girin.'); return; }
+   const tot = parseInt(localStorage.getItem('t_' + key)) || 0;
+   localStorage.setItem('mh_target_' + key, n);
+   localStorage.setItem('mh_start_' + key, tot);
+   scheduleDbWrite();
+   renderHome();
+ }
+
+ function checkMiniHedefCompletion(key, currentTot) {
+   const mini = getMiniHedef(key, currentTot);
+   if (mini && mini.done >= mini.target) {
+     miniHedefBeep();
+     localStorage.removeItem('mh_target_' + key);
+     localStorage.removeItem('mh_start_' + key);
+     scheduleDbWrite();
+   }
+ }
+
+
+ function openZikir(key) {
+ activeKey = key;
+ const item = DATA[key];
+ document.getElementById('home-screen').style.display = 'none';
+ document.getElementById('zikir-screen').style.display = 'flex';
+ document.getElementById('top-title').textContent = item.title;
+ document.getElementById('top-title').style.color = item.color;
+ const prayerEl = document.getElementById('main-prayer');
+ prayerEl.textContent = item.text;
+ prayerEl.className = "prayer-text " + item.size + " " + item.align;
+
+ const fz = document.getElementById('fazilet-zikir');
+ if (item.fazilet && item.fazilet.trim()) {
+   fz.textContent = item.fazilet;
+   fz.style.display = 'block';
+ } else {
+   fz.textContent = '';
+   fz.style.display = 'none';
+ }
+
+ document.getElementById('tar-val').textContent = item.target;
+ document.getElementById('main-btn').style.backgroundColor = item.color;
+ document.getElementById('bar-fill').style.backgroundColor = item.color;
+ load(); sync();
+ }
+
+ function closeApp() {
+ if (isWaiting) {
+   isWaiting = false;
+   counts.tot = 0;
+   if (activeKey) save();
+   const btn = document.getElementById('main-btn');
+   btn.textContent = "ZİKRET";
+   btn.disabled = false;
+ }
+ document.getElementById('home-screen').style.display = 'flex';
+ document.getElementById('zikir-screen').style.display = 'none';
+ renderHome();
+ }
+
+ function load() {
+ const today = getLocalDateKey();
+ counts.tot = parseInt(localStorage.getItem('t_' + activeKey)) || 0;
+ counts.tours = parseInt(localStorage.getItem('trs_' + activeKey)) || 0;
+
+ if(localStorage.getItem('d_date_' + activeKey) !== today) {
+   counts.day = 0;
+   localStorage.setItem('d_date_' + activeKey, today);
+   localStorage.setItem('d_' + activeKey, 0);
+ } else {
+   counts.day = parseInt(localStorage.getItem('d_' + activeKey)) || 0;
+ }
+ }
+
+ function inc() {
+ if(isWaiting) return;
+ const target = DATA[activeKey].target;
+ if(counts.tot >= target) return;
+ counts.tot++; counts.day++;
+ if(vibeOn === '1' && navigator.vibrate) navigator.vibrate(100);
+ beep();
+ checkMiniHedefCompletion(activeKey, counts.tot);
+ if(counts.tot === target) {
+ counts.tours++; save(); sync(); finishProcess();
+ } else { save(); sync(); }
+ }
+
+ function finishProcess() {
+ isWaiting = true;
+ const btn = document.getElementById('main-btn');
+ btn.textContent = "ALLAH KABUL ETSİN";
+ btn.disabled = true;
+ finishBeep();
+ setTimeout(() => {
+ counts.tot = 0; save(); sync();
+ btn.textContent = "ZİKRET";
+ btn.disabled = false; isWaiting = false;
+ }, 5000);
+
+ }
+
+ function save() {
+ localStorage.setItem('t_' + activeKey, counts.tot);
+ localStorage.setItem('d_' + activeKey, counts.day);
+ localStorage.setItem('trs_' + activeKey, counts.tours);
+ scheduleDbWrite();
+ }
+
+ function sync() {
+ const target = DATA[activeKey].target;
+ document.getElementById('tot-val').textContent = counts.tot;
+ document.getElementById('day-val').textContent = counts.day;
+ document.getElementById('tour-val').textContent = counts.tours;
+ const p = Math.min((counts.tot / target) * 100, 100);
+ document.getElementById('bar-fill').style.width = p + '%';
+ document.getElementById('perc-val').textContent = Math.floor(p) + '%';
+ renderMiniHedefZikir();
+ }
+
+ const confirmModal = document.getElementById('confirmModal');
+ const confirmText = document.getElementById('confirmText');
+ const confirmYes = document.getElementById('confirmYes');
+ const confirmNo = document.getElementById('confirmNo');
+
+ function showConfirm(message) {
+   return new Promise(resolve => {
+     confirmText.textContent = message;
+     confirmModal.style.display = 'flex';
+
+     const cleanup = (val) => {
+       confirmModal.style.display = 'none';
+       document.removeEventListener('keydown', onKey);
+       confirmYes.onclick = null;
+       confirmNo.onclick = null;
+       resolve(val);
+     };
+
+     const onKey = (e) => {
+       if (e.key === '0') cleanup(true);
+       if (e.key === '1' || e.key === 'Escape') cleanup(false);
+     };
+
+     document.addEventListener('keydown', onKey);
+     confirmYes.onclick = () => cleanup(true);
+     confirmNo.onclick = () => cleanup(false);
+   });
+ }
+
+ async function resetAll() {
+   if (lockOn === '1') return;
+   if(await showConfirm("Sayacı sıfırlamak istiyor musunuz?")) {
+     counts.tot = 0; counts.day = 0;
+     save(); sync();
+   }
+ }
+
+ async function resetTours() {
+   if (lockOn === '1') return;
+   if(await showConfirm("Turları sıfırlamak istiyor musunuz?")) {
+     counts.tours = 0;
+     save(); sync();
+   }
+ }
+
+ let deletedZikirHistory = [];
+
+ async function deleteZikirCompletely() {
+   if (lockOn === '1') return;
+   if (!activeKey) return;
+   const item = DATA[activeKey];
+   if (!item) return;
+   if (await showConfirm(`"${item.title}" adlı zikri tamamen silmek istiyor musunuz? Bu işlem geri alınamaz.`)) {
+     const key = activeKey;
+     deletedZikirHistory.push({
+       key: key,
+       entry: JSON.parse(JSON.stringify(item)),
+       wasCustom: !!item.custom,
+       customIndex: item.custom ? customZikirler.findIndex(z => z.key === key) : -1,
+       t: localStorage.getItem('t_' + key) || '0',
+       d: localStorage.getItem('d_' + key) || '0',
+       d_date: localStorage.getItem('d_date_' + key) || '',
+       trs: localStorage.getItem('trs_' + key) || '0',
+       mh_t: localStorage.getItem('mh_target_' + key) || '',
+       mh_s: localStorage.getItem('mh_start_' + key) || ''
+     });
+     if (item.custom) {
+       customZikirler = customZikirler.filter(z => z.key !== key);
+       saveCustomZikirlerToStorage();
+     } else {
+       if (!deletedZikirKeys.includes(key)) {
+         deletedZikirKeys.push(key);
+         saveDeletedZikirKeys();
+       }
+     }
+     delete DATA[key];
+     localStorage.removeItem('t_' + key);
+     localStorage.removeItem('d_' + key);
+     localStorage.removeItem('d_date_' + key);
+     localStorage.removeItem('trs_' + key);
+     localStorage.removeItem('mh_target_' + key);
+     localStorage.removeItem('mh_start_' + key);
+     activeKey = null;
+     scheduleDbWrite();
+     closeApp();
+   }
+ }
+
+ function editCurrentZikir() {
+   if (lockOn === '1') return;
+   if (!activeKey) return;
+   const item = DATA[activeKey];
+   if (!item) return;
+
+   zikirFormMode = 'edit';
+   zikirFormEditKey = activeKey;
+   document.getElementById('zf-heading').textContent = 'Zikri Düzenle';
+   document.getElementById('zf-title').value = item.title || '';
+   document.getElementById('zf-text').value = item.text || '';
+   document.getElementById('zf-fazilet').value = item.fazilet || '';
+   document.getElementById('zf-target').value = item.target || 100;
+   document.getElementById('zikirFormModal').style.display = 'flex';
+ }
+
+ function undoLastZikirDelete() {
+   if (deletedZikirHistory.length === 0) {
+     alert('Geri alınacak silinmiş bir zikir yok.');
+     return;
+   }
+   const snap = deletedZikirHistory.pop();
+   const key = snap.key;
+
+   DATA[key] = snap.entry;
+
+   if (snap.wasCustom) {
+     if (snap.customIndex >= 0 && snap.customIndex <= customZikirler.length) {
+       customZikirler.splice(snap.customIndex, 0, snap.entry);
+     } else {
+       customZikirler.push(snap.entry);
+     }
+     saveCustomZikirlerToStorage();
+   } else {
+     deletedZikirKeys = deletedZikirKeys.filter(k => k !== key);
+     saveDeletedZikirKeys();
+   }
+
+   localStorage.setItem('t_' + key, snap.t);
+   localStorage.setItem('d_' + key, snap.d);
+   localStorage.setItem('d_date_' + key, snap.d_date);
+   localStorage.setItem('trs_' + key, snap.trs);
+   if (snap.mh_t) { localStorage.setItem('mh_target_' + key, snap.mh_t); localStorage.setItem('mh_start_' + key, snap.mh_s || '0'); }
+
+   renderHome();
+   scheduleDbWrite();
+ }
+
+ function changeNumber() {
+ if (lockOn === '1') return;
+ const val = prompt("Sayıyı manuel ayarla:", counts.tot);
+ if(val !== null && !isNaN(val)) {
+ counts.tot = Math.max(0, Math.min(parseInt(val), DATA[activeKey].target));
+ checkMiniHedefCompletion(activeKey, counts.tot);
+ save(); sync();
+ }
+ }
+
+ // Tarayıcı/sekme kapanırken veya arka plana alınırken bekleyen
+ // yazımı beklemeden hemen tetikle. Mobilde "beforeunload" güvenilir
+ // ateşlenmeyebildiği için visibilitychange + pagehide de eklendi.
+ function flushDbWriteNow() {
+   clearTimeout(dbWriteTimer);
+   dbWriteTimer = null;
+   writeDbFileNow();
+ }
+ document.addEventListener('visibilitychange', () => {
+   if (document.visibilityState === 'hidden') flushDbWriteNow();
+ });
+ window.addEventListener('pagehide', flushDbWriteNow);
+ window.addEventListener('beforeunload', flushDbWriteNow);
+
+ const mainBtn = document.getElementById('main-btn');
+ mainBtn.addEventListener('touchstart', (e) => { e.preventDefault(); inc(); });
+ mainBtn.addEventListener('click', (e) => { if (e.pointerType !== 'touch') inc(); });
+
+ loadCustomZikirlerIntoData();
+ applyNight();
+ refreshToggles();
+ renderHome();
+ tryAutoConnect();
+ </script>
+</body>
+</html>
+
